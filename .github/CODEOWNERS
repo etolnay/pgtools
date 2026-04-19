@@ -1,0 +1,4 @@
+# All files require review and approval from the repository owner.
+# This file is enforced by the branch ruleset on main, which requires
+# CODEOWNERS review before any pull request can be merged.
+* @etolnay
