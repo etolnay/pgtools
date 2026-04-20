@@ -19,6 +19,9 @@ The SQL module at `sql/pgtools.sql` installs general tools:
 - `public.trim_to_null(text)` — trims surrounding whitespace and returns `NULL` if empty.
 - `public.tf_set_updated_at()` — trigger function that updates `updated_at` to now().
 
+The SQL module at `sql/clone_schema.sql` installs general tools:
+- `utils.clone_schema(from_schema text, to_schema text)` - creates a new schema named as `to_schema`, cloning the schema named `from_schema` (DDL only).
+
 The `sql` folder also contains an assortment of files with functions and other objects for specific requirements.
 
 ## Usage
