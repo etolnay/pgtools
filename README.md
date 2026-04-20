@@ -2,6 +2,8 @@
 Convenience PostgreSQL functions, stored procedures, types, and collations.
 Some of the functions are Supabase-specific.
 
+If you would like to contribute, please make any changes you want on your own fork, and create pull requests for any bugs you've fixed, or code you'd like to contribute to this repo. Thanks in advance!
+
 ## Overview
 All objects are created in a series of aptly-named schemas:
 * __utils__: Functions and procedures that assist with development, maintenance, set-up, etc.
@@ -12,28 +14,25 @@ All objects are created in a series of aptly-named schemas:
 
 The SQL module at `sql/pgtools.sql` installs general tools:
 
-- creates utils and private schemas
-- `pgtools.null_if_blank(text)` — returns `NULL` when a string is empty.
-- `pgtools.trim_to_null(text)` — trims surrounding whitespace and returns `NULL` if empty.
-- `pgtools.touch_row(regclass, text, text, text default 'updated_at')` — updates `updated_at` (or another timestamp column) for all rows matching `key_column::text = key_value` (multiple rows may be affected if the key column is not unique).
+- creates utils and private schemas if not already present, and revokes access from public for these.
+- `public.nullif_blank(text)` — returns `NULL` when a string is empty.
+- `public.trim_to_null(text)` — trims surrounding whitespace and returns `NULL` if empty.
+- `public.tf_set_updated_at()` — trigger function that updates `updated_at` to now().
 
-`touch_row` intentionally compares by `key_column::text`, so non-text key types are matched by their text output. If no rows match, the procedure exits without error.
-
-The `sql` folder contains an assortment of files with functions and stored procedures for specific requirements.
+The `sql` folder also contains an assortment of files with functions and other objects for specific requirements.
 
 ## Usage
 
 Load the utilities:
 
 ```sql
--- Replace /path/to/pgtools with your local checkout path.
-\i /path/to/pgtools/sql/pgtools.sql
+psql -f sql/pgtools.sql
 ```
 
 Examples:
 
 ```sql
-select pgtools.null_if_blank('');
-select pgtools.trim_to_null('  hello  ');
-call pgtools.touch_row('public.accounts', 'id', '42');
+SELECT public.nullif_blank('');
+SELECT public.trim_to_null('  hello  ');
+CREATE OR REPLACE TRIGGER set_updated_at BEFORE UPDATE ON your_table FOR EACH ROW EXECUTE FUNCTION public.tf_set_updated_at();
 ```
